@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -38,22 +39,33 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                Section::make()->schema([
-                    TextInput::make('title')->autofocus()->required()->placeholder('Title'),
-                    TextInput::make('slug')->autofocus()->required()->placeholder('Slug'),
+                Section::make('Create a post')->schema([
+                    Group::make()->schema([
+                        TextInput::make('title')->autofocus()->rules('min:3|max:255')->required()->placeholder('Title'),
+                        TextInput::make('slug')->autofocus()->required()->placeholder('Slug'),
+                    ]),
                     Select::make("category_id")->options(
                         Category::all()->pluck('name', 'id')
                     )->label("Category"),
 
                     ColorPicker::make('color')->required(),
-                    MarkdownEditor::make('content')->required()->placeholder('Content'),
-                ]),
+                    MarkdownEditor::make('content')->required()->placeholder('Content')->columnSpanFull(),
+                ])->columnSpan(2)->columns(2),
+                Group::make()->schema([
+                    Section::make('Image')->schema([
+                        FileUpload::make('thumbnail')->disk('public')->directory('thumbnails'),
+                    ]),
+                    Section::make('Meta')->schema([
+                        TagsInput::make('tags')->required(),
+                        Checkbox::make('published')->autofocus()->required()->label('Published'),
+                    ]),
+                ])->columnSpan(1),
 
-                FileUpload::make('thumbnail')->disk('public')->directory('thumbnails'),
 
-                TagsInput::make('tags')->required(),
-                Checkbox::make('published')->autofocus()->required()->label('Published'),
-            ])->columns(1);
+            ])->columns([
+                'default' => 1,
+                'md' => 2,
+            ]);
     }
 
     public static function table(Table $table): Table
