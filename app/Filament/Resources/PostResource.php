@@ -11,6 +11,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -31,34 +32,39 @@ class PostResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-bottom-center-text';
 
+    protected static ?string $modelLabel = 'Post';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('title')->autofocus()->required()->placeholder('Title'),
-                TextInput::make('slug')->autofocus()->required()->placeholder('Slug'),
-                Select::make("category_id")->options(
-                    Category::all()->pluck('name', 'id')
-                )->label("Category"),
+                Section::make()->schema([
+                    TextInput::make('title')->autofocus()->required()->placeholder('Title'),
+                    TextInput::make('slug')->autofocus()->required()->placeholder('Slug'),
+                    Select::make("category_id")->options(
+                        Category::all()->pluck('name', 'id')
+                    )->label("Category"),
 
-                ColorPicker::make('color')->required(),
-                MarkdownEditor::make('content')->required()->placeholder('Content'),
+                    ColorPicker::make('color')->required(),
+                    MarkdownEditor::make('content')->required()->placeholder('Content'),
+                ]),
+
                 FileUpload::make('thumbnail')->disk('public')->directory('thumbnails'),
 
                 TagsInput::make('tags')->required(),
                 Checkbox::make('published')->autofocus()->required()->label('Published'),
-            ]);
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+                ImageColumn::make('thumbnail'),
                 TextColumn::make('title')->sortable()->searchable(),
                 TextColumn::make('slug')->sortable()->searchable(),
                 TextColumn::make('category.name')->sortable()->searchable(),
                 ColorColumn::make('color'),
-                ImageColumn::make('thumbnail'),
                 TextColumn::make('tags'),
                 CheckboxColumn::make('published'),
             ])
