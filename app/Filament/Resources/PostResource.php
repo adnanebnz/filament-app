@@ -56,6 +56,7 @@ class PostResource extends Resource
             ->columns([
                 TextColumn::make('title')->sortable()->searchable(),
                 TextColumn::make('slug')->sortable()->searchable(),
+                TextColumn::make('category.name')->sortable()->searchable(),
                 ColorColumn::make('color'),
                 ImageColumn::make('thumbnail'),
                 TextColumn::make('tags'),
