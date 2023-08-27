@@ -17,5 +17,6 @@ Simple CRUD Admin Dashboard using The PHP framework paired with Filament. We've 
 - Rename the **.env.example** file to **.env** and configure your **database settings** and set your ```APP_URL``` according to your environement.
 - Run the migrations using ```php artisan migrate```
 - Create your admin account using ```php artisan make:filament-user```
+- Make sure to link the storage in order to upload and view images use ```php artisan storage:link```
 
 - Run ```php artisan serve``` to run the application on the PHP development server.
