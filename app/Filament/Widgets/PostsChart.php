@@ -2,27 +2,27 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\User;
+use App\Models\Post;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 
-class UsersChart extends ChartWidget
+class PostsChart extends ChartWidget
 {
-    protected static ?string $heading = 'User';
+    protected static ?string $heading = 'Post';
 
     protected function getData(): array
     {
-        $users = User::select('created_at')->get()->groupBy(function ($users) {
-            return Carbon::parse($users->created_at)->format('F');
+        $posts = Post::select('created_at')->get()->groupBy(function ($posts) {
+            return Carbon::parse($posts->created_at)->format('F');
         });
         $quantities = [];
-        foreach ($users as $user => $value) {
+        foreach ($posts as $post => $value) {
             array_push($quantities, $value->count());
         }
         return [
             'datasets' => [
                 [
-                    'label' => 'Users Joined',
+                    'label' => 'Posts',
                     'data' => $quantities,
                     'backgroundColor' => [
                         'rgba(255, 99, 132, 0.2)',
@@ -45,13 +45,13 @@ class UsersChart extends ChartWidget
                     'borderWidth' => 1
                 ],
             ],
-            'labels' => $users->keys(),
+            'labels' => $posts->keys(),
+
         ];
     }
 
     protected function getType(): string
     {
         return 'bar';
-        // THERE IS bar , line , pie, scatter
     }
 }
